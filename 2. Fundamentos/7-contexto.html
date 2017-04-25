@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Hola Mundo React</title>
+  </head>
+  <body>
+    <main id="app"></main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.24.0/babel.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.5.4/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.5.4/react-dom.js"></script>
+    <script type='text/babel'>
+
+      // Context es un objeto que va a tener los datos del contexto
+      function Hola(props, context) {
+        return (
+          <h1 id='Title' onClick={props.onClick} onMouseEnter={props.onMouseEnter}>
+            Hola {props.name} {context.count}
+          </h1>
+        )
+      }
+
+      // Define el tipo de datos que espera recibir del contexto
+      Hola.contextTypes = {
+        count: React.PropTypes.number
+      }
+
+      class MiComponente extends React.Component {
+        constructor(props) {
+          super(props)
+
+          this.state = {
+            count: 0
+          }
+
+          this.handleClick = this.handleClick.bind(this)
+        }
+
+        // Nos permite devolver los datos que queramos mandar al contexto de la aplicacion
+        getChildContext() {
+          return {
+            count: this.state.count
+          }
+        }
+
+        componentDidMount() {
+          document.addEventListener('click', this.handleClick)
+        }
+
+        shouldComponentUpdate(nextProps, nextState) {
+          return nextState.count !== this.state.count
+        }
+
+        componentWillUnmount() {
+          document.removeEventListener('click', this.handleClick)
+        }
+
+        handleClick() {
+          this.setState({
+            count: this.state.count + 1
+          })
+        }
+
+        handleMouseEnter(ev) {
+          console.log(ev.target)
+        }
+
+        render () {
+          return (
+            <Hola
+              name={this.props.name}
+              count={this.state.count}
+              onClick={this.handleClick}
+              onMouseEnter={this.handleMouseEnter}
+              />
+          )
+        }
+      }
+
+      // Un objeto que define el tipo de datos que deben mandarse en el contexto
+      MiComponente.childContextTypes = {
+        count: React.PropTypes.number
+      }
+
+      ReactDOM.render(
+        <MiComponente name='Platzi' />,
+        document.getElementById('app')
+      )
+    </script>
+  </body>
+</html>
